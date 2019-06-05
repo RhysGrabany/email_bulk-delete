@@ -327,9 +327,7 @@ def deleteEmails(mailServer, emailDict, sender, relevance, number, folderPath):
     
 
     for uid in cut:
-        print(uid)
         mailServer.delete_messages(uid)
-        print(mailServer.get_flags(uid))
         mailServer.expunge()
 
     mailServer.select_folder(folderPath, readonly=True)
