@@ -1,7 +1,7 @@
 import pyzmail
 from collections import defaultdict
 
-
+# adds the raw emails to the dictionary
 def addingEtoD(rawMessages, rawUIDs):
     
     emailDict = defaultdict(list)
@@ -18,6 +18,7 @@ def addingEtoD(rawMessages, rawUIDs):
     
     return emailDict
 
+# adds up the emails in the dictionary and saves the result
 def summing(dict):
 
     sumDict = defaultdict(list)
@@ -31,6 +32,7 @@ def summing(dict):
 
     return sumDict
 
+# changes order of the output
 def ascendingDescending(dict, asc):
 
     if asc is True:

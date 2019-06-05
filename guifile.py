@@ -16,16 +16,20 @@ def mainmenu(mailServer, sumDict, sortDict, emailDict, rawMessage, rawUIDs, inbo
     printToTerminal(sumDict, sortDict)
     print("Please chose an option on how to use this program")
     
+    # the input pathway for the program
+    # if the user wishes to exit using keyboard interrupt, then the progam logsout 
     try:
         while True:
             rawinuser = input("-> ")
 
+            # input checking
             if len(rawinuser) < 1:
                 rawinuser = "NaN"
             
             inuser = rawinuser.split()
             command = str(inuser[0]).lower()
 
+            # the various options allowed
             if command in ('v', 'view'):
                 view(mailServer, sumDict, sortDict, emailDict, rawMessage, rawUIDs, inboxPath)
 
@@ -51,6 +55,7 @@ def mainmenu(mailServer, sumDict, sortDict, emailDict, rawMessage, rawUIDs, inbo
                 printDicts(rawMessage, rawUIDs, emailDict)
 
     except KeyboardInterrupt:
+        # logging out for keyboard interrupt
         exiting(mailServer)
 
 def view(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath):
@@ -59,6 +64,8 @@ def view(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPa
     printToTerminal(sumDict, sortDict)
     print("Please use various commands to view emails from an address")
 
+    # same sort of input menu
+    # try-catch block not needed since it is in the main method
     while True:
         rawinuser = input("-> ")
         
@@ -73,6 +80,7 @@ def view(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPa
             number = int(inuser[1])
             sender = str(inuser[2]).capitalize()
 
+        # checking if email is in the raw email dictionary
         if (len(inuser) is 3) and sender not in emailDict.keys():
             print("No address by that name")
         else:
@@ -101,9 +109,11 @@ def delete(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbox
         command = str(inuser[0]).lower()
 
         if len(inuser) > 1:
+            # choosing emails based on relevance
             if command in ("first", "f", "recent", "r", "last", "l"):
                 number = int(inuser[1])
                 sender = str(inuser[2])
+            # or just selecting all emails
             elif command in ("a", "all"):
                 number = None
                 addresses = inuser[1:]
@@ -111,6 +121,7 @@ def delete(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbox
                 for address in addresses:
                     sender.append(address.capitalize())
 
+        # input based on number of characters
         if (len(inuser) > 0):
             if command in ("m", "mm", "main", "menu"):
                 mainmenu(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath)
@@ -119,10 +130,12 @@ def delete(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbox
             elif (command in ("first", "f", "recent", "r", "last", "l", "a", "all")) and (len(inuser) >= 2):
                 if command in ("first", "f", "recent", "r", "last", "l"):
                     
+                    # check if email is in the raw email dictionary
                     if sender not in emailDict.keys():
                         print("No address by that name")
                         return
 
+                    # a check if they want to delete the emails selected and print the emails in focus
                     getInfo(emailDict, sender, command, number, rawMessages, rawUIDs)
                     print("Delete these emails?")
                     
@@ -131,21 +144,26 @@ def delete(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbox
                         deleteEmails(mailServer, emailDict, sender, command, number, inboxPath)
                         refresh(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs)
 
+                # delete emails in bul
                 elif command in ("a", "all"):
 
+                    # delete emails from the list of emails address stored in sender
                     print("Delete all emails from {} ?".format(sender))
 
                     outcome = yesNo()
                     if outcome is True:
                         for address in sender:
+                            # email delete method
                             deleteEmails(mailServer, emailDict, address, command, number, inboxPath)
 
+# logging out
 def exiting(mailServer):
     os.system("clear")
     print("Exiting Program")
     mailServer.logout()
     sys.exit()
 
+# method for the help screen
 def helping(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath):
     os.system("clear")
     print("Help")
@@ -220,10 +238,14 @@ def helping(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbo
         elif command in ('quit', 'q', 'exit', 'e'):
             exiting(mailServer)
 
+# print th dictionaries to file
+# raw contains the uids of the emails
+# emaildict contains the number of emails for each address
 def printDicts(rawMessages, rawUIDs, emailDict):
     rawOutputToFile(rawMessages, rawUIDs)
     dictOutPutToFile(emailDict)
 
+# refresh logs out the user then logs them back in and reverts back to main menu
 def refresh(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath):
     os.system("clear")
     print("Refreshing")
@@ -244,13 +266,16 @@ def refresh(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbo
     
     mainmenu(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath)
 
+# change the ascending/descending nature of the emails on the main menu
 def changeOrder(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath, asc):
     os.system("clear")
     sortDict = ascendingDescending(sumDict, asc)
     mainmenu(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inboxPath)
 
+# print the emails to the terminal
 def printToTerminal(sumDict, sortDict):
 
+    # only prints the top 100
     top = sortDict[:100]
 
     for key, value in zip(top, sumDict.items()):
@@ -268,6 +293,7 @@ def printToTerminal(sumDict, sortDict):
     
     print("\n")
 
+# fetches the info for a selection of emails
 def getInfo(emailDict, sender, relevance, number, rawMessages, rawUIDs):
 
     if relevance in ('first', 'f'):
@@ -282,6 +308,7 @@ def getInfo(emailDict, sender, relevance, number, rawMessages, rawUIDs):
     print("\n")
 
     for i in cut:
+        # this makes it look nicer and prints the subject, from address, and to address
         message = pyzmail.PyzMessage.factory(rawMessages[i][b'BODY[]'])
         
         subject = message.get_subject()
@@ -293,6 +320,7 @@ def getInfo(emailDict, sender, relevance, number, rawMessages, rawUIDs):
         print("From: " + str(froma))
         print("To: " + str(toa) + "\n")
 
+# user input for the email deleting
 def yesNo():
 
     while True:
@@ -309,8 +337,10 @@ def yesNo():
         elif inuser[0] in ("n", "no"):
             return False 
 
+# deleting the actual emails from the server
 def deleteEmails(mailServer, emailDict, sender, relevance, number, folderPath):
     
+    # moves readonly to false
     mailServer.select_folder(folderPath, readonly=False)
     print(folderPath)
 
@@ -330,4 +360,5 @@ def deleteEmails(mailServer, emailDict, sender, relevance, number, folderPath):
         mailServer.delete_messages(uid)
         mailServer.expunge()
 
+    # moves readonly back to true
     mailServer.select_folder(folderPath, readonly=True)

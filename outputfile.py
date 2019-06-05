@@ -1,5 +1,6 @@
 import pyzmail
 
+# prints the raw info to file
 def rawOutputToFile(raw, uids):
     textfile = open("rawoutput.txt", "w")
 
@@ -10,6 +11,7 @@ def rawOutputToFile(raw, uids):
         output = fromA + " " + str(uid) + "\n"
         textfile.write(output)
 
+# prints summing dictionary to file
 def dictOutPutToFile(dict):
     textfile = open("dictoutput.txt", "w")
     for k, v in dict.items():

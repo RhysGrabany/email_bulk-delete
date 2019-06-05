@@ -4,7 +4,7 @@ import pprint
 
 import imapclient
 
-
+# fetches the sensitive info from the config
 def sensitiveInfo():
     conf = cfg.ConfigParser()
 
@@ -16,6 +16,7 @@ def sensitiveInfo():
 
     return user, passw, app_pass
 
+# fetches the email info from the config
 def emailInfo():
     conf = cfg.ConfigParser()
 
@@ -26,6 +27,7 @@ def emailInfo():
 
     return smtp_ser, smtp_port
 
+# logs in the user to the gmail server
 def login(server, user, app_pass):
     mailServer = imapclient.IMAPClient(server, ssl=True)
     imaplib._MAXLINE = 10000000
@@ -33,11 +35,6 @@ def login(server, user, app_pass):
 
     pprint.pprint(mailServer.list_folders())
 
-
-    #if ('[Google Mail]/All Mail') not in mailServer.list_folders():
-    #    mailServer.select_folder('[Gmail]/All Mail', readonly=True)
-    #    inboxPath = '[Gmail]/All Mail'
-    #else:
     mailServer.select_folder('[Google Mail]/All Mail', readonly=True)
     inboxPath = '[Google Mail]/All Mail'
     
