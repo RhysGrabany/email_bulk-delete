@@ -5,7 +5,7 @@ from datastructfile import addingEtoD, summing, ascendingDescending
 from guifile import mainmenu, printToTerminal
 
 # save variables from config file
-username, password, app_pass = sensitiveInfo()
+username, app_pass = sensitiveInfo()
 server, port = emailInfo()
 
 # login using sensitive info 

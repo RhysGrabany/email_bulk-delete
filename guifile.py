@@ -252,7 +252,7 @@ def refresh(mailServer, sumDict, sortDict, emailDict, rawMessages, rawUIDs, inbo
 
     mailServer.logout()
 
-    username, password, app_pass = sensitiveInfo()
+    username, app_pass = sensitiveInfo()
     server, port = emailInfo()
     mailServer, inboxPath, rawMessages, rawUIDs  = login(server, username, app_pass)
     
